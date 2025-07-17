@@ -22,7 +22,7 @@ export default function Login() {
 
     if (res.ok) {
       localStorage.setItem('token', data.access_token);
-      router.push('/index');
+      router.push('/');
     } else {
       setError(data.message || 'Login failed');
     }

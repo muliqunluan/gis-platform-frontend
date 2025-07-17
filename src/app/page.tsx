@@ -1,11 +1,17 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import {Label} from '@/components/atoms/Label/Label';
+import Button from '@/components/atoms/Button/Button';
+import NavigationItem from '@/components/atoms/NavigationItem/NavigationItem';
+import LogoutButton from '@/components/atoms/LogoutButton/LogoutButton';
+import { Divider } from '@/components/atoms/Divider/Divider';
 
 export default function Home() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'square' | 'publish' | 'workspace' | 'message'>('square');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -16,74 +22,50 @@ export default function Home() {
     }
   }, [router]);
 
-  function handleLogout() {
-    localStorage.removeItem('token');
-    router.push('/login');
-  }
-
-  function goToUser() {
+  const goToUser = () => {
     router.push('/user');
-  }
+  };
 
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h1 style={styles.title}>Home Page</h1>
-        <p>Welcome! You are logged in.</p>
-        <div style={styles.buttonGroup}>
-          <button style={styles.button} onClick={goToUser}>Go to Profile</button>
-          <button style={styles.logoutButton} onClick={handleLogout}>Logout</button>
-        </div>
-      </div>
+    <div className="flex h-screen">
+      {/* Sidebar */}
+      <aside className="w-60 bg-slate-600 text-white flex flex-col p-4">
+        <Label className="text-xl font-bold mb-8">NeoMap</Label>
+        <NavigationItem
+          label="地图广场"
+          active={activeTab === 'square'}
+          onClick={() => setActiveTab('square')}
+        />
+        <NavigationItem
+          label="发布地图"
+          active={activeTab === 'publish'}
+          onClick={() => setActiveTab('publish')}
+        />
+        <NavigationItem
+          label="工作台"
+          active={activeTab === 'workspace'}
+          onClick={() => setActiveTab('workspace')}
+        />
+        <Divider></Divider>
+        <NavigationItem
+          label="消息"
+          active={activeTab === 'message'}
+          onClick={() => setActiveTab('message')}
+        />
+        <div className="flex-grow" />
+        <Button className="mb-2" onClick={goToUser}>
+          个人账户
+        </Button>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 p-8 bg-slate-50">
+        {activeTab === 'square' && <div>这里是地图广场内容（未实现）</div>}
+        {activeTab === 'publish' && <div>这里是发布地图内容（未实现）</div>}
+        {activeTab === 'workspace' && <div>这里是工作台（未实现）</div>}
+      </main>
     </div>
   );
 }
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-    backgroundColor: '#f7f7f7',
-  },
-  card: {
-    backgroundColor: '#fff',
-    padding: '2rem',
-    borderRadius: 12,
-    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-    textAlign: 'center',
-    maxWidth: 400,
-    width: '100%',
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: '1rem',
-  },
-  buttonGroup: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '1rem',
-    marginTop: '1.5rem',
-  },
-  button: {
-    padding: '0.6rem 1.2rem',
-    borderRadius: 6,
-    border: 'none',
-    backgroundColor: '#0070f3',
-    color: '#fff',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-  },
-  logoutButton: {
-    padding: '0.6rem 1.2rem',
-    borderRadius: 6,
-    border: 'none',
-    backgroundColor: '#e00',
-    color: '#fff',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-  },
-};
