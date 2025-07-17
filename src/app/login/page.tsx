@@ -1,7 +1,14 @@
-'use client'
+'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import {Input} from '@/components/atoms/Input/Input';
+import Button from '@/components/atoms/Button/Button';
+import {Label} from '@/components/atoms/Label/Label';
+import ErrorMessage from '@/components/atoms/ErrorMessage/ErrorMessage';
+import Card from '@/components/atoms/Card/Card';
+import Title from '@/components/atoms/Title/Title';
+import TextLink from '@/components/atoms/TextLink/TextLink';
 
 export default function Login() {
   const router = useRouter();
@@ -33,96 +40,34 @@ export default function Login() {
   }
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>Welcome Back</h2>
-        <form onSubmit={handleLogin} style={styles.form}>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            style={styles.input}
-            required
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            style={styles.input}
-            required
-          />
-          <button type="submit" style={styles.button}>Login</button>
-          {error && <p style={styles.error}>{error}</p>}
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+      <Card>
+        <Title>Welcome Back</Title>
+        <form onSubmit={handleLogin} className="flex flex-col gap-4 text-left">
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              required
+            />
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              required
+            />
+          <Button type="submit">Login</Button>
+          <ErrorMessage message={error} />
         </form>
-
-        <div style={styles.footer}>
+        <div className="mt-6 text-sm text-gray-600 flex justify-center items-center">
           <span>Don't have an account?</span>
-          <button onClick={goToRegister} style={styles.link}>Register</button>
+          <TextLink onClick={goToRegister}>Register</TextLink>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-    backgroundColor: '#f7f7f7',
-  },
-  card: {
-    width: '100%',
-    maxWidth: 400,
-    backgroundColor: '#fff',
-    padding: '2rem',
-    borderRadius: 12,
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-    textAlign: 'center',
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: '1.5rem',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-  },
-  input: {
-    padding: '0.75rem',
-    borderRadius: 6,
-    border: '1px solid #ccc',
-    fontSize: 16,
-  },
-  button: {
-    padding: '0.75rem',
-    borderRadius: 6,
-    border: 'none',
-    backgroundColor: '#0070f3',
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-    cursor: 'pointer',
-  },
-  error: {
-    color: 'red',
-    marginTop: 10,
-  },
-  footer: {
-    marginTop: '1.5rem',
-    fontSize: 14,
-    color: '#666',
-  },
-  link: {
-    marginLeft: 8,
-    color: '#0070f3',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    fontWeight: 'bold',
-  },
-};

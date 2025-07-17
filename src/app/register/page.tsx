@@ -1,7 +1,14 @@
-'use client'
+'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+
+import {Input} from '@/components/atoms/Input/Input';
+import Button from '@/components/atoms/Button/Button';
+import Card from '@/components/atoms/Card/Card';
+import Title from '@/components/atoms/Title/Title';
+import ErrorMessage from '@/components/atoms/ErrorMessage/ErrorMessage';
+import TextLink from '@/components/atoms/TextLink/TextLink';
 
 export default function Register() {
   const router = useRouter();
@@ -17,13 +24,18 @@ export default function Register() {
     const res = await fetch('http://localhost:3001/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, first_name: firstName, last_name: lastName }),
+      body: JSON.stringify({
+        email,
+        password,
+        first_name: firstName,
+        last_name: lastName,
+      }),
     });
 
     const data = await res.json();
 
     if (res.ok) {
-      router.push('/login');  // 注册成功跳转到登录页面
+      router.push('/login');
     } else {
       setError(data.message || 'Registration failed');
     }
@@ -34,110 +46,44 @@ export default function Register() {
   }
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>Create an Account</h2>
-        <form onSubmit={handleRegister} style={styles.form}>
-          <input
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+      <Card>
+        <Title>Create an Account</Title>
+        <form onSubmit={handleRegister} className="flex flex-col gap-4 text-left">
+          <Input
             type="email"
-            placeholder="Email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
             required
-            style={styles.input}
           />
-          <input
+          <Input
             type="password"
-            placeholder="Password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
             required
-            style={styles.input}
           />
-          <input
+          <Input
             type="text"
-            placeholder="First Name"
             value={firstName}
-            onChange={e => setFirstName(e.target.value)}
-            style={styles.input}
+            onChange={(e) => setFirstName(e.target.value)}
+            placeholder="First Name"
           />
-          <input
+          <Input
             type="text"
-            placeholder="Last Name"
             value={lastName}
-            onChange={e => setLastName(e.target.value)}
-            style={styles.input}
+            onChange={(e) => setLastName(e.target.value)}
+            placeholder="Last Name"
           />
-          <button type="submit" style={styles.button}>Register</button>
-          {error && <p style={styles.error}>{error}</p>}
+          <Button type="submit">Register</Button>
+          <ErrorMessage message={error} />
         </form>
-
-        <div style={styles.footer}>
+        <div className="mt-6 text-sm text-gray-600 flex justify-center items-center">
           <span>Already have an account?</span>
-          <button onClick={goToLogin} style={styles.link}>Login</button>
+          <TextLink onClick={goToLogin}>Login</TextLink>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-    backgroundColor: '#f0f2f5',
-  },
-  card: {
-    width: '100%',
-    maxWidth: 420,
-    backgroundColor: '#fff',
-    padding: '2rem',
-    borderRadius: 12,
-    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
-    textAlign: 'center',
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: '1.5rem',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-  },
-  input: {
-    padding: '0.75rem',
-    borderRadius: 6,
-    border: '1px solid #ccc',
-    fontSize: 16,
-  },
-  button: {
-    padding: '0.75rem',
-    borderRadius: 6,
-    border: 'none',
-    backgroundColor: '#0070f3',
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-    cursor: 'pointer',
-  },
-  error: {
-    color: 'red',
-    marginTop: 10,
-  },
-  footer: {
-    marginTop: '1.5rem',
-    fontSize: 14,
-    color: '#666',
-  },
-  link: {
-    marginLeft: 8,
-    color: '#0070f3',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    fontWeight: 'bold',
-  },
-};

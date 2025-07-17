@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {Label} from '@/components/atoms/Label/Label';
+import { Label } from '@/components/atoms/Label/Label';
 import Button from '@/components/atoms/Button/Button';
 import NavigationItem from '@/components/atoms/NavigationItem/NavigationItem';
 import LogoutButton from '@/components/atoms/LogoutButton/LogoutButton';
 import { Divider } from '@/components/atoms/Divider/Divider';
+import MapTypeSelection from '@/components/map-create/map-type-selection/map-type-selection';
 
 export default function Home() {
   const router = useRouter();
@@ -29,10 +30,10 @@ export default function Home() {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-slate-100">
       {/* Sidebar */}
-      <aside className="w-60 bg-slate-600 text-white flex flex-col p-4">
-        <Label className="text-xl font-bold mb-8">NeoMap</Label>
+      <aside className="w-60 bg-slate-600 text-white flex flex-col p-6 shadow-lg">
+        <Label className="text-2xl font-bold mb-8">NeoMap</Label>
         <NavigationItem
           label="地图广场"
           active={activeTab === 'square'}
@@ -48,7 +49,7 @@ export default function Home() {
           active={activeTab === 'workspace'}
           onClick={() => setActiveTab('workspace')}
         />
-        <Divider></Divider>
+        <Divider />
         <NavigationItem
           label="消息"
           active={activeTab === 'message'}
@@ -61,9 +62,9 @@ export default function Home() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-8 bg-slate-50">
+      <main className="flex-1 p-8 bg-slate-50 overflow-y-auto">
         {activeTab === 'square' && <div>这里是地图广场内容（未实现）</div>}
-        {activeTab === 'publish' && <div>这里是发布地图内容（未实现）</div>}
+        {activeTab === 'publish' && <MapTypeSelection />}
         {activeTab === 'workspace' && <div>这里是工作台（未实现）</div>}
       </main>
     </div>
