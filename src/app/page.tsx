@@ -8,6 +8,7 @@ import NavigationItem from '@/components/atoms/NavigationItem/NavigationItem';
 import LogoutButton from '@/components/atoms/LogoutButton/LogoutButton';
 import { Divider } from '@/components/atoms/Divider/Divider';
 import MapTypeSelection from '@/components/map-create/map-type-selection/map-type-selection';
+import MapRangeSelector from '@/components/organisms/MapRangeSelector';
 
 export default function Home() {
   const router = useRouter();
@@ -65,7 +66,7 @@ export default function Home() {
       <main className="flex-1 p-8 bg-slate-50 overflow-y-auto">
         {activeTab === 'square' && <div>这里是地图广场内容（未实现）</div>}
         {activeTab === 'publish' && <MapTypeSelection />}
-        {activeTab === 'workspace' && <div>这里是工作台（未实现）</div>}
+        {activeTab === 'workspace' && <MapRangeSelector/>}
       </main>
     </div>
   );
