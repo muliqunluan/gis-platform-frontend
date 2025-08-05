@@ -1,9 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import { Viewer, Cartesian3 } from 'cesium'; // 添加 Cartesian3 导入
+import { Viewer, Cartesian3, Ion } from 'cesium'; // 添加 Cartesian3 和 Ion 导入
 import 'cesium/Build/Cesium/Widgets/widgets.css';
 
 // 配置 Cesium 静态资源路径
 (window as any).CESIUM_BASE_URL = '/cesium/';
+
+// Cesium Ion 访问令牌
+Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4OWM1MTAyYi00MjhjLTQ0MGQtYTgxMy1hOTI2ODg1Yzk5ZTciLCJpZCI6MzI3MzA3LCJpYXQiOjE3NTM5MzM2NzF9.PfBkn66mJ7MBmwCn7BVN5rasMZ-thVz_zQNGfaet_7k';
 
 const MainMap = () => {
   const cesiumContainer = useRef<HTMLDivElement>(null);

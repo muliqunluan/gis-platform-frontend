@@ -97,7 +97,7 @@ export default function Home() {
         </Button>
       </aside>
 
-      <main className={`flex-1 flex flex-col bg-slate-50 ${activeTab === 'map' ? 'p-0' : 'p-8'}`}>
+      <main className={`flex-1 flex flex-col bg-slate-50 P-0`}>
         <div className="flex-1 flex flex-col">
           {renderContent()}
         </div>
