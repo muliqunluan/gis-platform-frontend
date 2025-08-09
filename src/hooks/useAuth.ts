@@ -6,10 +6,12 @@ export const useAuth = () => {
 
   useEffect(() => {
     try {
-      const token = localStorage.getItem('token');
+      // 同时检查 cookie 和 localStorage
+      const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1]
+        || localStorage.getItem('token');
       setIsAuthenticated(!!token);
     } catch (error) {
-      console.error('localStorage访问错误', error);
+      console.error('认证检查错误', error);
       setIsAuthenticated(false);
     } finally {
       setIsLoading(false);

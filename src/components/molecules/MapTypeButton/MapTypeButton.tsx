@@ -5,11 +5,16 @@ interface MapTypeButtonProps {
   name: string;
   imageUrl: string;
   onClick: () => void;
+  className?: string;
 }
 
-const MapTypeButton: React.FC<MapTypeButtonProps> = ({ name, imageUrl, onClick }) => {
+const MapTypeButton: React.FC<MapTypeButtonProps> = ({ name, imageUrl, onClick, className }) => {
   return (
-    <Button onClick={onClick} style={styles.button}>
+    <Button
+      onClick={onClick}
+      style={styles.button}
+      className={className}
+    >
       <div style={styles.content}>
         <img src={imageUrl} alt={name} style={styles.image} />
         <span style={styles.name}>{name}</span>

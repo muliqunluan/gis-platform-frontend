@@ -29,6 +29,8 @@ export default function Login() {
 
     if (res.ok) {
       localStorage.setItem('token', data.access_token);
+      // 同时设置cookie，有效期7天
+      document.cookie = `token=${data.access_token}; path=/; max-age=${60*60*24*7}`;
       router.push('/');
     } else {
       setError(data.message || 'Login failed');
