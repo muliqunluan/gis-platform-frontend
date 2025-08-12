@@ -6,6 +6,7 @@ import ToggleSwitch from '@/components/atoms/ToggleSwitch/ToggleSwitch';
 import ImageUploader from '@/components/atoms/ImageUploader/ImageUploader';
 import Button from '@/components/atoms/Button/Button';
 import ErrorMessage from '@/components/atoms/ErrorMessage/ErrorMessage';
+import Card from '@/components/atoms/Card/Card';
 
 interface MapInfoFormProps {
   onBack?: () => void;
@@ -61,7 +62,8 @@ export default function MapInfoForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <Card>
+    <form onSubmit={handleSubmit} className="space-y-4 w-full">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           地图名称
@@ -137,5 +139,6 @@ export default function MapInfoForm({
         </Button>
       </div>
     </form>
+    </Card>
   );
 }

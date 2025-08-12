@@ -121,7 +121,7 @@ function HomeContent() {
       </aside>
 
       <main className="flex-1 flex flex-col bg-slate-50">
-        <div className="flex-1 flex flex-col items-center justify-center p-8 max-w-4xl w-full mx-auto">
+        <div className="flex-1 flex flex-col items-center justify-center p-8 w-full h-full">
           {renderContent()}
         </div>
       </main>

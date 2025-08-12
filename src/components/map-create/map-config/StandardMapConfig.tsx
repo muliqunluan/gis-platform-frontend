@@ -7,6 +7,7 @@ import { Input } from '@/components/atoms/Input/Input';
 import ToggleSwitch from '@/components/atoms/ToggleSwitch/ToggleSwitch';
 import Button from '@/components/atoms/Button/Button';
 import ErrorMessage from '@/components/atoms/ErrorMessage/ErrorMessage';
+import Card from '@/components/atoms/Card/Card';
 
 interface StandardMapConfigProps {
   onBack: () => void;
@@ -54,21 +55,20 @@ export default function StandardMapConfig({ onBack, onSubmit }: StandardMapConfi
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full space-y-6">
-      <div className="space-y-4 w-full">
-        <h2 className="text-xl font-semibold">地图范围设置</h2>
-        <MapRangeSelector 
-          onExtentChange={handleExtentChange}
-          initialView={{
-            center: formData.config?.extent 
-              ? [(formData.config.extent[0] + formData.config.extent[2]) / 2, 
-                 (formData.config.extent[1] + formData.config.extent[3]) / 2]
-              : undefined,
-            zoom: formData.config?.extent ? 10 : undefined
-          }}
-        />
-      </div>
-
+    <form onSubmit={handleSubmit} className="w-full space-y-6 flex justify-center">
+      <div className="grid gap-6 md:grid-cols-2 flex">
+          <MapRangeSelector
+          className="h-full justify-end"
+            onExtentChange={handleExtentChange}
+            initialView={{
+              center: formData.config?.extent
+                ? [(formData.config.extent[0] + formData.config.extent[2]) / 2,
+                   (formData.config.extent[1] + formData.config.extent[3]) / 2]
+                : undefined,
+              zoom: formData.config?.extent ? 10 : undefined
+            }}
+          />
+        <Card>
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">缩放范围</h2>
         <div className="flex gap-4">
@@ -140,6 +140,8 @@ export default function StandardMapConfig({ onBack, onSubmit }: StandardMapConfi
         >
           下一步
         </Button>
+      </div>
+        </Card>
       </div>
     </form>
   );

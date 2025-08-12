@@ -19,6 +19,7 @@ import Title from '../atoms/Title/Title';
 import ErrorMessage from '../atoms/ErrorMessage/ErrorMessage';
 
 interface MapRangeSelectorProps {
+  className?:string;
   initialView?: {
     center?: [number, number];
     zoom?: number;
@@ -27,6 +28,7 @@ interface MapRangeSelectorProps {
 }
 
 const MapRangeSelector: React.FC<MapRangeSelectorProps> = ({
+  className,
   initialView = { center: [116.4, 39.9], zoom: 10 },
   onExtentChange,
 }) => {
@@ -297,7 +299,7 @@ const MapRangeSelector: React.FC<MapRangeSelectorProps> = ({
   };
 
   return (
-    <Card>
+    <Card className={className}>
       <Title>地图范围选择器</Title>
 
       <div className="flex flex-col gap-4">
