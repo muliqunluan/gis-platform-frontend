@@ -306,6 +306,7 @@ const MapRangeSelector: React.FC<MapRangeSelectorProps> = ({
         <div className="flex gap-4">
           {extent && (
             <Button
+              type="button"
               onClick={() => {
                 if (map && extent) {
                   const extentGeom = [
