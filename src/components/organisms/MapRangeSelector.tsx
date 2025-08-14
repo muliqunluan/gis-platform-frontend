@@ -20,27 +20,26 @@ import ErrorMessage from '../atoms/ErrorMessage/ErrorMessage';
 
 interface MapRangeSelectorProps {
   className?:string;
-  initialView?: {
-    center?: [number, number];
-    zoom?: number;
-  };
+  initialExtent?: [number, number, number, number];
   onExtentChange?: (extent: [number, number, number, number]) => void;
+  onZoomToExtent?: (zoom: number) => void;
 }
 
 const MapRangeSelector: React.FC<MapRangeSelectorProps> = ({
   className,
-  initialView = { center: [116.4, 39.9], zoom: 10 },
+  initialExtent,
   onExtentChange,
+  onZoomToExtent,
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<Map | null>(null);
   const [vectorSource, setVectorSource] = useState<VectorSource | null>(null);
-  const [extent, setExtent] = useState<[number, number, number, number] | null>(null);
+  const [extent, setExtent] = useState<[number, number, number, number] | null>(initialExtent || null);
   const [inputValues, setInputValues] = useState({
-    minLon: '',
-    minLat: '',
-    maxLon: '',
-    maxLat: '',
+    minLon: initialExtent ? initialExtent[0].toFixed(6) : '',
+    minLat: initialExtent ? initialExtent[1].toFixed(6) : '',
+    maxLon: initialExtent ? initialExtent[2].toFixed(6) : '',
+    maxLat: initialExtent ? initialExtent[3].toFixed(6) : '',
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -71,8 +70,8 @@ const MapRangeSelector: React.FC<MapRangeSelectorProps> = ({
         }),
       ],
       view: new View({
-        center: fromLonLat(initialView.center || [116.4, 39.9]),
-        zoom: initialView.zoom || 10,
+        center: fromLonLat(initialExtent ? [(initialExtent[0] + initialExtent[2]) / 2, (initialExtent[1] + initialExtent[3]) / 2] : [0, 0]),
+        zoom: initialExtent ? 4 : 2,
       }),
     });
 
@@ -82,6 +81,7 @@ const MapRangeSelector: React.FC<MapRangeSelectorProps> = ({
       initialMap.setTarget(undefined);
     };
   }, []);
+
 
   // 绘制交互
   useEffect(() => {
@@ -309,13 +309,19 @@ const MapRangeSelector: React.FC<MapRangeSelectorProps> = ({
               type="button"
               onClick={() => {
                 if (map && extent) {
+                  const view = map.getView();
                   const extentGeom = [
                     ...fromLonLat([extent[0], extent[1]]),
                     ...fromLonLat([extent[2], extent[3]]),
                   ];
-                  map.getView().fit(extentGeom, {
+                  view.fit(extentGeom, {
                     padding: [50, 50, 50, 50],
                     duration: 1000,
+                    callback: () => {
+                      if (onZoomToExtent) {
+                        onZoomToExtent(Math.floor(view.getZoom() || 0));
+                      }
+                    },
                   });
                 }
               }}

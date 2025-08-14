@@ -45,6 +45,16 @@ export default function MapPublishConfirm({ onBack, onPublish }: MapPublishConfi
               {formData.config?.minZoom} - {formData.config?.maxZoom}
             </p>
           </div>
+          <div>
+            <label className="block text-sm font-medium">默认缩放级别</label>
+            <p className="mt-1">{formData.config?.zoom}</p>
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium">地图范围</label>
+          <p className="mt-1">
+            {formData.config?.extent ? formData.config.extent.join(', ') : '全球'}
+          </p>
         </div>
       </div>
 

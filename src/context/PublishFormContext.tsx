@@ -11,9 +11,10 @@ interface InfoFormData {
 }
 
 interface ConfigFormData {
-  extent?: [number, number, number, number];
+  extent: [number, number, number, number];
   minZoom?: number;
   maxZoom?: number;
+  zoom?: number;
   projection?: string;
   enableDefaultControls?: boolean;
 }

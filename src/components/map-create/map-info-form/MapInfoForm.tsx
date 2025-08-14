@@ -7,6 +7,7 @@ import ImageUploader from '@/components/atoms/ImageUploader/ImageUploader';
 import Button from '@/components/atoms/Button/Button';
 import ErrorMessage from '@/components/atoms/ErrorMessage/ErrorMessage';
 import Card from '@/components/atoms/Card/Card';
+import { usePublishForm } from '@/context/PublishFormContext';
 
 interface MapInfoFormProps {
   onBack?: () => void;
@@ -17,25 +18,18 @@ interface MapInfoFormProps {
     description: string;
     image?: File;
   }) => void;
-  initialValues?: {
-    name?: string;
-    isPublic?: boolean;
-    groupName?: string;
-    description?: string;
-    imageUrl?: string;
-  };
 }
 
 export default function MapInfoForm({
   onSubmit,
-  initialValues,
   onBack
 }: MapInfoFormProps) {
-  const [name, setName] = useState(initialValues?.name || '');
-  const [isPublic, setIsPublic] = useState(initialValues?.isPublic || false);
-  const [groupName, setGroupName] = useState(initialValues?.groupName || '');
-  const [description, setDescription] = useState(initialValues?.description || '');
-  const [imageFile, setImageFile] = useState<File | undefined>();
+  const { formData } = usePublishForm();
+  const [name, setName] = useState(formData.info?.name || '');
+  const [isPublic, setIsPublic] = useState(formData.info?.isPublic || false);
+  const [groupName, setGroupName] = useState(formData.info?.groupName || '');
+  const [description, setDescription] = useState(formData.info?.description || '');
+  const [imageFile, setImageFile] = useState<File | undefined>(formData.info?.image);
   const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -113,7 +107,6 @@ export default function MapInfoForm({
           展示图片
         </label>
         <ImageUploader
-          initialImageUrl={initialValues?.imageUrl}
           onImageUpload={setImageFile}
         />
       </div>

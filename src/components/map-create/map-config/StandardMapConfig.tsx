@@ -25,11 +25,13 @@ export default function StandardMapConfig({ onBack, onSubmit }: StandardMapConfi
     min: formData.config?.minZoom || 0,
     max: formData.config?.maxZoom || 18,
   });
+  const [defaultZoom, setDefaultZoom] = useState(formData.config?.zoom || 10);
   const [projection, setProjection] = useState(formData.config?.projection || 'EPSG:3857');
   const [enableDefaultControls, setEnableDefaultControls] = useState(
     formData.config?.enableDefaultControls ?? true
   );
   const [error, setError] = useState('');
+  const [isMinZoomLocked, setIsMinZoomLocked] = useState(false);
 
   const handleExtentChange = (extent: [number, number, number, number]) => {
     updateConfigForm({ ...formData.config, extent });
@@ -43,10 +45,16 @@ export default function StandardMapConfig({ onBack, onSubmit }: StandardMapConfi
       return;
     }
 
+    if (defaultZoom < zoomRange.min || defaultZoom > zoomRange.max) {
+      setError('默认缩放级别必须在最小和最大缩放级别之间');
+      return;
+    }
+
     updateConfigForm({
-      extent: formData.config?.extent,
+      extent: formData.config?.extent || [-180, -90, 180, 90],
       minZoom: zoomRange.min,
       maxZoom: zoomRange.max,
+      zoom: defaultZoom,
       projection,
       enableDefaultControls,
     });
@@ -59,13 +67,11 @@ export default function StandardMapConfig({ onBack, onSubmit }: StandardMapConfi
       <div className="grid gap-6 md:grid-cols-2 flex">
           <MapRangeSelector
           className="h-full justify-end"
+            initialExtent={formData.config?.extent}
             onExtentChange={handleExtentChange}
-            initialView={{
-              center: formData.config?.extent
-                ? [(formData.config.extent[0] + formData.config.extent[2]) / 2,
-                   (formData.config.extent[1] + formData.config.extent[3]) / 2]
-                : undefined,
-              zoom: formData.config?.extent ? 10 : undefined
+            onZoomToExtent={(zoom) => {
+              setZoomRange(prev => ({ ...prev, min: zoom }));
+              setIsMinZoomLocked(true);
             }}
           />
         <Card>
@@ -80,6 +86,7 @@ export default function StandardMapConfig({ onBack, onSubmit }: StandardMapConfi
               max="18"
               value={zoomRange.min}
               onChange={(e) => setZoomRange({...zoomRange, min: parseInt(e.target.value) || 0})}
+              readOnly={isMinZoomLocked}
             />
           </div>
           <div className="flex-1">
@@ -92,6 +99,20 @@ export default function StandardMapConfig({ onBack, onSubmit }: StandardMapConfi
               onChange={(e) => setZoomRange({...zoomRange, max: parseInt(e.target.value) || 18})}
             />
           </div>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold">默认缩放级别</h2>
+        <div className="flex items-center gap-4">
+          <Input
+            type="number"
+            min={zoomRange.min}
+            max={zoomRange.max}
+            value={defaultZoom}
+            onChange={(e) => setDefaultZoom(parseInt(e.target.value) || 0)}
+            className="flex-1"
+          />
         </div>
       </div>
 
