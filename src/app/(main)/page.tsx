@@ -14,6 +14,7 @@ import StandardMapConfig from '@/components/map-create/map-config/StandardMapCon
 import MapPublishConfirm from '@/components/map-create/map-preview/MapPublishConfirm';
 import MapRangeSelector from '@/components/organisms/MapRangeSelector';
 import ImageSlider from '@/components/organisms/ImageSlider';
+import MiniLedSimulator from '@/components/organisms/MiniLedSimulator';
 
 // 动态导入 MainMap 组件，禁用 SSR
 const MainMap = dynamic(
@@ -83,7 +84,7 @@ function HomeContent() {
           handleTabChange('map');
         }}
       />,
-      workspace: <MapRangeSelector />,
+      workspace: <div className='flex'><MiniLedSimulator /><MiniLedSimulator /></div>,
       message: null, // 消息页面待实现
     };
 
