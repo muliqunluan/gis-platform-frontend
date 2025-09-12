@@ -15,6 +15,7 @@ import MapPublishConfirm from '@/components/map-create/map-preview/MapPublishCon
 import MapRangeSelector from '@/components/organisms/MapRangeSelector';
 import ImageSlider from '@/components/organisms/ImageSlider';
 import MiniLedSimulator from '@/components/organisms/MiniLedSimulator';
+import MapsPage from './maps/page';
 
 // 动态导入 MainMap 组件，禁用 SSR
 const MainMap = dynamic(
@@ -23,9 +24,10 @@ const MainMap = dynamic(
 );
 import { useAuth } from '@/hooks/useAuth';
 import { NavigationConfig } from '@/config/navigation';
+import HexMapTest from '@/components/hex-map-test/HexMapTest';
 
 // 抽象导航类型
-type ActiveTab = 'square' | 'publish' | 'workspace' | 'message' | 'map' | 'publish-info' | 'publish-config' | 'publish-confirm';
+type ActiveTab = 'square' | 'publish' | 'workspace' | 'message' | 'map' | 'maps' | 'publish-info' | 'publish-config' | 'publish-confirm';
 
 function HomeContent() {
   const router = useRouter();
@@ -79,12 +81,12 @@ function HomeContent() {
         onBack={() => handleTabChange('publish-config')}
         onPublish={() => {
           updatePreviewForm({ confirmed: true });
-          console.log('发布地图数据');
           resetForm();
           handleTabChange('map');
         }}
       />,
-      workspace: <div className='flex'><MiniLedSimulator /><MiniLedSimulator /></div>,
+      workspace: <div className='flex'><HexMapTest /></div>,
+      maps: <MapsPage />,
       message: null, // 消息页面待实现
     };
 

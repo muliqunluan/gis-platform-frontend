@@ -9,6 +9,7 @@ import Card from '@/components/atoms/Card/Card';
 import Title from '@/components/atoms/Title/Title';
 import ErrorMessage from '@/components/atoms/ErrorMessage/ErrorMessage';
 import TextLink from '@/components/atoms/TextLink/TextLink';
+import { API_BASE_URL } from '@/lib/api/config';
 
 export default function Register() {
   const router = useRouter();
@@ -21,7 +22,7 @@ export default function Register() {
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
 
-    const res = await fetch('http://localhost:3001/auth/register', {
+    const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react';
+import { API_BASE_URL } from '@/lib/api/config';
 let debounceTimer: NodeJS.Timeout;
 export default function UserRoleChangeForm() {
     const [email, setEmail] = useState('');
@@ -11,7 +12,7 @@ export default function UserRoleChangeForm() {
 
     // 获取所有可用角色
     useEffect(() => {
-        fetch('http://localhost:3001/roles')
+        fetch(`${API_BASE_URL}/api/roles`)
             .then((res) => res.json())
             .then((data) => {
                 setAllRoles(data); // 假设后端返回 ['admin', 'user', 'moderator']
@@ -25,7 +26,7 @@ export default function UserRoleChangeForm() {
     // 输入邮箱后，获取该用户当前角色
     async function fetchUserRoles(userEmail: string) {
         try {
-            const res = await fetch(`http://localhost:3001/users/${userEmail}/roles`);
+            const res = await fetch(`${API_BASE_URL}/api/users/${userEmail}/roles`);
             if (!res.ok) throw new Error('用户不存在或获取角色失败');
             const data = await res.json(); // 假设返回 ['user']
             console.log(data)
@@ -45,7 +46,7 @@ export default function UserRoleChangeForm() {
     //     // 防抖处理：输入停止 500ms 后才触发
     //     debounceTimer && clearTimeout(debounceTimer);
     //     debounceTimer = setTimeout(() => {
-    //         fetch(`http://localhost:3001/users/${email}/roles`)
+    //         fetch(`${API_BASE_URL}/api/users/${email}/roles`)
     //             .then(res => {
     //                 if (!res.ok) throw new Error('Failed');
     //                 return res.json();
@@ -86,7 +87,7 @@ export default function UserRoleChangeForm() {
     }
 
     try {
-        const res = await fetch(`http://localhost:3001/users/${email}/roles`, {
+        const res = await fetch(`${API_BASE_URL}/api/users/${email}/roles`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ roles }), // 传递的是角色名称数组

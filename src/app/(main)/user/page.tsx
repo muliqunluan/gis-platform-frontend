@@ -6,6 +6,7 @@ import Card from '@/components/atoms/Card/Card';
 import Button from '@/components/atoms/Button/Button';
 import Title from '@/components/atoms/Title/Title';
 import { Spinner } from '@/components/atoms/Spinner/Spinner';
+import { API_BASE_URL } from '@/lib/api/config';
 
 export default function UserPage() {
   const router = useRouter();
@@ -30,7 +31,7 @@ export default function UserPage() {
       }
 
       // 使用新的接口和从Token中获取的用户ID来请求用户信息
-      fetch(`http://localhost:3001/user-profile/${userId}`, {
+      fetch(`${API_BASE_URL}/api/user-profile/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then(res => {
