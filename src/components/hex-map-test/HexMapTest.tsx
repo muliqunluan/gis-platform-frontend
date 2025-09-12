@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, useState } from 'react';
-import { Point, Hex, Graph, generateHexagonalMap, aStar, qrToWorld, worldToQR } from './hex-logic';
+import { Point, Hex, Graph, generateRectangleMap, aStar, qrToWorld, worldToQR, QRCoord } from './hex-logic';
 
 const HEX_SIZE = 30;
 
@@ -13,7 +13,9 @@ const HexMapTest = () => {
   const [path, setPath] = useState<Hex[] | null>(null);
   const [mode, setMode] = useState<'start' | 'end' | 'obstacle'>('start');
   const [hoveredHex, setHoveredHex] = useState<Hex | null>(null);
-  const [radius, setRadius] = useState(5); // Default radius
+  const [mousePosition, setMousePosition] = useState<{ world: Point, hex: QRCoord } | null>(null);
+  const [width, setWidth] = useState(15); // Default width
+  const [height, setHeight] = useState(10); // Default height
 
   // Function to draw a single hexagon
   const drawHex = (ctx: CanvasRenderingContext2D, center: Point, color: string) => {
@@ -34,17 +36,17 @@ const HexMapTest = () => {
     ctx.stroke();
   };
 
-  // Initialize and update grid based on radius
+  // Initialize and update grid based on width/height
   useEffect(() => {
-    const hexes = generateHexagonalMap(radius);
+    const hexes = generateRectangleMap(width, height);
     const newGraph = new Graph(hexes);
     setGraph(newGraph);
-    // Reset state when radius changes
+    // Reset state when size changes
     setStartHex(null);
     setEndHex(null);
     setPath(null);
     setHoveredHex(null);
-  }, [radius]);
+  }, [width, height]);
 
   // Drawing effect
   useEffect(() => {
@@ -55,8 +57,8 @@ const HexMapTest = () => {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
-    // Center the grid in the canvas
-    ctx.translate(canvas.width / 2, canvas.height / 2);
+    // Offset for better viewing
+    ctx.translate(HEX_SIZE * 2, HEX_SIZE * 2);
 
     const neighbors = hoveredHex ? graph.getNeighbors(hoveredHex) : [];
     const neighborStrings = new Set(neighbors.map((n: Hex) => n.toString()));
@@ -100,9 +102,9 @@ const HexMapTest = () => {
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    // Adjust click coordinates to be relative to the canvas center
-    const x = event.clientX - rect.left - canvas.width / 2;
-    const y = event.clientY - rect.top - canvas.height / 2;
+    // Adjust click coordinates for offset
+    const x = event.clientX - rect.left - HEX_SIZE * 2;
+    const y = event.clientY - rect.top - HEX_SIZE * 2;
 
     const qr = worldToQR({ x, y }, HEX_SIZE);
     
@@ -161,7 +163,7 @@ const HexMapTest = () => {
     setPath(null);
     setMode('start');
     // Reset all obstacles by regenerating the map
-    const hexes = generateHexagonalMap(radius);
+    const hexes = generateRectangleMap(width, height);
     const newGraph = new Graph(hexes);
     setGraph(newGraph);
   };
@@ -180,11 +182,12 @@ const HexMapTest = () => {
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    // Adjust mouse coordinates to be relative to the canvas center
-    const x = event.clientX - rect.left - canvas.width / 2;
-    const y = event.clientY - rect.top - canvas.height / 2;
+    // Adjust mouse coordinates for offset
+    const x = event.clientX - rect.left - HEX_SIZE * 2;
+    const y = event.clientY - rect.top - HEX_SIZE * 2;
 
     const qr = worldToQR({ x, y }, HEX_SIZE);
+    setMousePosition({ world: { x, y }, hex: qr });
     
     let q = qr.q, r = qr.r, s = -q - r;
     let rq = Math.round(q), rr = Math.round(r), rs = Math.round(s);
@@ -208,14 +211,21 @@ const HexMapTest = () => {
         <button onClick={() => setMode('obstacle')} style={{ fontWeight: mode === 'obstacle' ? 'bold' : 'normal' }}>设置障碍物</button>
         <button onClick={reset} style={{ marginLeft: '10px' }}>全部重置</button>
         <div style={{ marginLeft: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <label htmlFor="radius-slider">地图层数 (Radius): {radius}</label>
+          <label htmlFor="width-input">宽度:</label>
           <input
-            type="range"
-            id="radius-slider"
-            min="0"
-            max="10"
-            value={radius}
-            onChange={(e) => setRadius(parseInt(e.target.value, 10))}
+            type="number"
+            id="width-input"
+            value={width}
+            onChange={(e) => setWidth(parseInt(e.target.value, 10) || 1)}
+            style={{ width: '60px' }}
+          />
+          <label htmlFor="height-input" style={{ marginLeft: '10px' }}>高度:</label>
+          <input
+            type="number"
+            id="height-input"
+            value={height}
+            onChange={(e) => setHeight(parseInt(e.target.value, 10) || 1)}
+            style={{ width: '60px' }}
           />
         </div>
       </div>
@@ -228,9 +238,20 @@ const HexMapTest = () => {
           style={{ border: '1px solid black', cursor: 'pointer' }}
           onClick={handleCanvasClick}
           onMouseMove={handleCanvasMouseMove}
+          onMouseLeave={() => setMousePosition(null)}
         />
         <div style={{ border: '1px solid #ccc', padding: '10px', width: '400px', height: '700px', overflowY: 'auto', fontFamily: 'monospace' }}>
           <h2>实时数据</h2>
+
+          <h3>鼠标信息</h3>
+          {mousePosition ? (
+            <pre><code>
+              世界坐标 (XY): ({mousePosition.world.x.toFixed(2)}, {mousePosition.world.y.toFixed(2)}){'\n'}
+              逻辑坐标 (QR): ({mousePosition.hex.q.toFixed(2)}, {mousePosition.hex.r.toFixed(2)})
+            </code></pre>
+          ) : (
+            <p>请将鼠标移入地图区域</p>
+          )}
           
           <h3>图结构 (悬停查看)</h3>
           {hoveredHex ? (

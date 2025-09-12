@@ -140,18 +140,17 @@ export class Graph {
 // ------------------------------------------------------------------------------------------
 
 /**
- * [蓝图参考]：创建一个名为 `GenerateHexagonalMap` 的函数。
- * 输入：半径/层数 (Integer)
+ * [蓝图参考]：创建一个名为 `GenerateRectangleMap` 的函数。
+ * 输入：地图宽度 (Integer), 地图高度 (Integer)
  * 输出：一个六边形单元数组 (Array of HexTile)
- * 作用：以(0,0)为中心，生成一个六边形形状的地图。这是程序化生成地图的核心。
+ * 作用：生成一个近似矩形的六边形网格地图。
  */
-export function generateHexagonalMap(radius: number): Hex[] {
+export function generateRectangleMap(width: number, height: number): Hex[] {
   const hexes: Hex[] = [];
-  // 遍历立方体坐标系（Cube Coordinates）来确保生成六边形形状
-  for (let q = -radius; q <= radius; q++) {
-    const r1 = Math.max(-radius, -q - radius);
-    const r2 = Math.min(radius, -q + radius);
-    for (let r = r1; r <= r2; r++) {
+  for (let r = 0; r < height; r++) {
+    // 每隔一行，进行偏移，以形成紧凑的六边形布局
+    const rOffset = Math.floor(r / 2);
+    for (let q = -rOffset; q < width - rOffset; q++) {
       hexes.push(new Hex(q, r));
     }
   }
