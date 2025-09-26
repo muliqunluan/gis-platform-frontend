@@ -21,8 +21,11 @@ export default function MapsPage() {
     const fetchMaps = async () => {
       try {
         setLoading(true)
-        const response = await fetch(`${API_BASE_URL}/api/maps/my-maps`, {
-          credentials: 'include'
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE_URL}/api/maps/my`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
         })
         
         if (!response.ok) {
@@ -55,9 +58,12 @@ export default function MapsPage() {
     if (!confirm('确定要删除这个地图吗？')) return
     
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${API_BASE_URL}/api/maps/${mapId}`, {
         method: 'DELETE',
-        credentials: 'include'
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
       })
       
       if (response.ok) {

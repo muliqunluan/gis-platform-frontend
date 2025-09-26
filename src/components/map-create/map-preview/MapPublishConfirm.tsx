@@ -3,9 +3,11 @@
 import React, { useState } from 'react';
 import { usePublishForm } from '@/context/PublishFormContext';
 import Button from '@/components/atoms/Button/Button';
-import { mapApi } from '@/lib/api/map';
+import { mapApi, CreateMapRequest, MapResponse } from '@/lib/api/map';
 import { MapType } from '@/types/map';
 import { useRouter } from 'next/navigation';
+import { useMutation } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 
 interface MapPublishConfirmProps {
   onBack: () => void;
@@ -14,50 +16,46 @@ interface MapPublishConfirmProps {
 
 export default function MapPublishConfirm({ onBack, onPublish }: MapPublishConfirmProps) {
   const { formData } = usePublishForm();
-  const [isPublishing, setIsPublishing] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+
+  const mutation = useMutation<MapResponse, Error, CreateMapRequest>({
+    mutationFn: (mapData: CreateMapRequest) => mapApi.createMap(mapData),
+    onSuccess: (data) => {
+      toast.success('地图发布成功!');
+      onPublish();
+      // 跳转到新创建的地图页面或地图列表页
+      router.push(`/maps`);
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || '发布地图失败');
+      setError(err.message || '发布地图失败');
+    },
+  });
 
   const handlePublish = async () => {
     if (!formData.info || !formData.config) {
       setError('请完善地图信息');
       return;
     }
-
-    setIsPublishing(true);
     setError('');
 
-    try {
-      const mapData = {
-        name: formData.info.name,
-        type: MapType.OPENLAYERS_GAODE, // 默认使用高德地图类型
-        isPublic: formData.info.isPublic,
-        groupName: formData.info.groupName,
-        description: formData.info.description,
-        bounds: formData.config.extent,
-        zoomRange: formData.config.minZoom && formData.config.maxZoom
-          ? [formData.config.minZoom, formData.config.maxZoom] as [number, number]
-          : undefined,
-        projection: formData.config.projection,
-        defaultZoom: formData.config.zoom,
-        extent: formData.config.extent,
-      };
+    const mapData = {
+      name: formData.info.name,
+      type: MapType.OPENLAYERS_GAODE, // 默认使用高德地图类型
+      isPublic: formData.info.isPublic,
+      groupName: formData.info.groupName,
+      description: formData.info.description,
+      bounds: formData.config.extent,
+      zoomRange: formData.config.minZoom && formData.config.maxZoom
+        ? [formData.config.minZoom, formData.config.maxZoom] as [number, number]
+        : undefined,
+      projection: formData.config.projection,
+      defaultZoom: formData.config.zoom,
+      extent: formData.config.extent,
+    };
 
-      const result = await mapApi.createMap(mapData);
-      console.log('地图发布成功:', result);
-      
-      // 调用父组件的发布完成回调
-      onPublish();
-      
-      // 可以添加成功提示或跳转到地图详情页
-      // router.push(`/maps/${result.id}`);
-      
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '发布地图失败');
-      console.error('发布地图失败:', err);
-    } finally {
-      setIsPublishing(false);
-    }
+    mutation.mutate(mapData);
   };
 
   return (
@@ -118,7 +116,7 @@ export default function MapPublishConfirm({ onBack, onPublish }: MapPublishConfi
           onClick={onBack}
           variant="ghost"
           className="flex-1"
-          disabled={isPublishing}
+          disabled={mutation.isPending}
         >
           返回修改
         </Button>
@@ -126,9 +124,9 @@ export default function MapPublishConfirm({ onBack, onPublish }: MapPublishConfi
           type="button"
           onClick={handlePublish}
           className="flex-1"
-          disabled={isPublishing}
+          disabled={mutation.isPending}
         >
-          {isPublishing ? '发布中...' : '确认发布'}
+          {mutation.isPending ? '发布中...' : '确认发布'}
         </Button>
       </div>
     </div>

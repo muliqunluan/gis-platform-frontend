@@ -30,6 +30,7 @@ export default function MapInfoForm({
   const [groupName, setGroupName] = useState(formData.info?.groupName || '');
   const [description, setDescription] = useState(formData.info?.description || '');
   const [imageFile, setImageFile] = useState<File | undefined>(formData.info?.image);
+  const [createGroup, setCreateGroup] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -40,7 +41,7 @@ export default function MapInfoForm({
       return;
     }
 
-    if (!groupName.trim()) {
+    if (createGroup && !groupName.trim()) {
       setError('群组名称不能为空');
       return;
     }
@@ -79,16 +80,28 @@ export default function MapInfoForm({
         />
       </div>
 
-     <div>
-       <label className="block text-sm font-medium text-gray-700 mb-1">
-         群组名称
-       </label>
-       <Input
-         value={groupName}
-         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGroupName(e.target.value)}
-         placeholder="输入新群组名称"
-       />
-     </div>
+      <div className="flex items-center justify-between">
+        <label className="block text-sm font-medium text-gray-700">
+          同时创建群组
+        </label>
+        <ToggleSwitch
+          initialValue={createGroup}
+          onChange={setCreateGroup}
+        />
+      </div>
+
+     {createGroup && (
+       <div>
+         <label className="block text-sm font-medium text-gray-700 mb-1">
+           群组名称
+         </label>
+         <Input
+           value={groupName}
+           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGroupName(e.target.value)}
+           placeholder="输入新群组名称"
+         />
+       </div>
+     )}
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
